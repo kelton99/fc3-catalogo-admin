@@ -1,11 +1,12 @@
 package com.fc.kelton.admin.catalogo.domain.category;
 
+import com.fc.kelton.admin.catalogo.domain.AggregateRoot;
+import com.fc.kelton.admin.catalogo.domain.validation.ValidationHandler;
+
 import java.time.Instant;
-import java.util.UUID;
 
-public class Category {
+public class Category extends AggregateRoot<CategoryID> {
 
-    private final String id;
     private final String name;
     private final String description;
     private final boolean active;
@@ -13,32 +14,38 @@ public class Category {
     private final Instant updatedAt;
     private final Instant deletedAt;
 
-
     private Category(
-            final String id,
-            final String name,
-            final String description,
-            final boolean active,
-            final Instant createdAt,
-            final Instant updatedAt,
-            final Instant deletedAt
+            final CategoryID anId,
+            final String aName,
+            final String aDescription,
+            final boolean isActive,
+            final Instant aCreatedAt,
+            final Instant aUpdatedAt,
+            final Instant aDeletedAt
     ) {
-        this.id = id;
-        this.name = name;
-        this.description = description;
-        this.active = active;
-        this.createdAt = createdAt;
-        this.updatedAt = updatedAt;
-        this.deletedAt = deletedAt;
+        super(anId);
+        this.name = aName;
+        this.description = aDescription;
+        this.active = isActive;
+        this.createdAt = aCreatedAt;
+        this.updatedAt = aUpdatedAt;
+        this.deletedAt = aDeletedAt;
     }
 
     public static Category newCategory(final String aName, final String aDescription, final boolean isActive) {
-        final var id = UUID.randomUUID().toString();
+        final var id = CategoryID.unique();
         final var now = Instant.now();
         return new Category(id, aName, aDescription, isActive, now, now, null);
     }
 
-    public String getId() {
+    @Override
+    public void validate(ValidationHandler handler) {
+        new CategoryValidator(this, handler).validate();
+    }
+
+    @Override
+
+    public CategoryID getId() {
         return id;
     }
 
