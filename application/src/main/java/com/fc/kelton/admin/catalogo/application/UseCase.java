@@ -1,9 +1,6 @@
 package com.fc.kelton.admin.catalogo.application;
 
-import com.fc.kelton.admin.catalogo.domain.category.Category;
+public abstract class UseCase<IN, OUT> {
 
-public class UseCase {
-    public Category execute(String name, String description, boolean active) {
-        return Category.newCategory(name, description, active);
-    }
+    public abstract OUT execute(IN anIn);
 }
