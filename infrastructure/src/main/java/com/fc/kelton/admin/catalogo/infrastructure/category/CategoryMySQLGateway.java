@@ -5,8 +5,8 @@ import com.fc.kelton.admin.catalogo.domain.category.Category;
 import com.fc.kelton.admin.catalogo.domain.category.CategoryGateway;
 import com.fc.kelton.admin.catalogo.domain.category.CategoryID;
 import com.fc.kelton.admin.catalogo.domain.category.CategorySearchQuery;
+import com.fc.kelton.admin.catalogo.infrastructure.category.persistence.CategoryJpaEntity;
 import com.fc.kelton.admin.catalogo.infrastructure.category.persistence.CategoryRepository;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -21,8 +21,8 @@ public class CategoryMySQLGateway implements CategoryGateway {
     }
 
     @Override
-    public Category create(Category aCategory) {
-        return null;
+    public Category create(final Category aCategory) {
+        return this.categoryRepository.save(CategoryJpaEntity.from(aCategory)).toAggregate();
     }
 
     @Override
