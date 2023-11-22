@@ -40,7 +40,6 @@ public class CategoryMySQLGatewayTest {
         Assertions.assertEquals(aCategory.getUpdatedAt(), actualCategory.getUpdatedAt());
         Assertions.assertNull(actualCategory.getDeletedAt());
 
-
         final var actualEntity = categoryRepository.findById(aCategory.getId().getValue()).get();
 
         Assertions.assertNotNull(actualCategory);

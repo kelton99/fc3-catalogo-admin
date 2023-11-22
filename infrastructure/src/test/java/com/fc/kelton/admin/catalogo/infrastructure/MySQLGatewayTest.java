@@ -1,6 +1,5 @@
 package com.fc.kelton.admin.catalogo.infrastructure;
 
-import com.fc.kelton.admin.catalogo.infrastructure.category.CategoryMySQLGatewayTest;
 import org.junit.jupiter.api.extension.BeforeEachCallback;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.extension.ExtensionContext;
