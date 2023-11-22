@@ -36,8 +36,8 @@ public class CategoryMySQLGateway implements CategoryGateway {
     }
 
     @Override
-    public Category update(Category aCategory) {
-        return null;
+    public Category update(final Category aCategory) {
+        return this.categoryRepository.save(CategoryJpaEntity.from(aCategory)).toAggregate();
     }
 
     @Override
