@@ -3,7 +3,7 @@ package com.fc.kelton.admin.catalogo.infrastructure.category;
 import com.fc.kelton.admin.catalogo.domain.category.Category;
 import com.fc.kelton.admin.catalogo.domain.category.CategoryID;
 import com.fc.kelton.admin.catalogo.domain.category.CategorySearchQuery;
-import com.fc.kelton.admin.catalogo.infrastructure.MySQLGatewayTest;
+import com.fc.kelton.admin.catalogo.MySQLGatewayTest;
 import com.fc.kelton.admin.catalogo.infrastructure.category.persistence.CategoryJpaEntity;
 import com.fc.kelton.admin.catalogo.infrastructure.category.persistence.CategoryRepository;
 import org.junit.jupiter.api.Assertions;
