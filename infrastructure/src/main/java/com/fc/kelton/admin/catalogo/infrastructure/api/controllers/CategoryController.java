@@ -8,9 +8,8 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class CategoryController implements CategoryApi {
 
-
     @Override
-    public ResponseEntity<?> createcategory() {
+    public ResponseEntity<?> createCategory() {
         return null;
     }
 
