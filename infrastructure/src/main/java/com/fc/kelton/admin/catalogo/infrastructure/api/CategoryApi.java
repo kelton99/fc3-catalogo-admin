@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-@RequestMapping("categories")
+@RequestMapping(value = "categories")
 @Tag(name = "Categories")
 public interface CategoryApi {
 
@@ -23,7 +23,7 @@ public interface CategoryApi {
     @Operation(summary = "Create a new category")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "Created successfully"),
-            @ApiResponse(responseCode = "422", description = "Unprocessable error was thrown"),
+            @ApiResponse(responseCode = "422", description = "A validation error was thrown"),
             @ApiResponse(responseCode = "500", description = "An internal server error was thrown"),
     })
     ResponseEntity<?> createCategory();
