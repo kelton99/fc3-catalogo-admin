@@ -1,8 +1,10 @@
 package com.fc.kelton.admin.catalogo.application.category.retrieve.get;
 
+import com.fc.kelton.admin.catalogo.domain.category.Category;
 import com.fc.kelton.admin.catalogo.domain.category.CategoryGateway;
 import com.fc.kelton.admin.catalogo.domain.category.CategoryID;
 import com.fc.kelton.admin.catalogo.domain.exceptions.DomainException;
+import com.fc.kelton.admin.catalogo.domain.exceptions.NotFoundException;
 import com.fc.kelton.admin.catalogo.domain.validation.Error;
 
 import java.util.Objects;
@@ -24,8 +26,7 @@ public class DefaultGetCategoryByIdUseCase extends GetCategoryByIdUseCase {
                 .orElseThrow(notFound(aCategoryId));
     }
 
-    private static Supplier<DomainException> notFound(final CategoryID anId) {
-        return () -> DomainException
-                .with(new Error("Category with ID %s was not found".formatted(anId.getValue())));
+    private static Supplier<NotFoundException> notFound(final CategoryID anId) {
+        return () -> NotFoundException.with(Category.class, anId);
     }
 }

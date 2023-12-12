@@ -4,6 +4,7 @@ import com.fc.kelton.admin.catalogo.domain.category.Category;
 import com.fc.kelton.admin.catalogo.domain.category.CategoryGateway;
 import com.fc.kelton.admin.catalogo.domain.category.CategoryID;
 import com.fc.kelton.admin.catalogo.domain.exceptions.DomainException;
+import com.fc.kelton.admin.catalogo.domain.exceptions.NotFoundException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -60,10 +61,10 @@ public class GetCategoryByIdUseCaseTest {
         Mockito.when(categoryGateway.findById(Mockito.eq(expectedId)))
                 .thenReturn(Optional.empty());
 
-        final var actualException = Assertions.assertThrows(DomainException.class,
+        final var actualException = Assertions.assertThrows(NotFoundException.class,
                 () -> usecase.execute(expectedId.getValue()));
 
-        Assertions.assertEquals(expectedErrorMessage, actualException.getErrors().get(0).message());
+        Assertions.assertEquals(expectedErrorMessage, actualException.getMessage());
     }
 
     @Test
