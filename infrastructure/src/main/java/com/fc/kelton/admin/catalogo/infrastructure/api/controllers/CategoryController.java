@@ -34,7 +34,7 @@ public class CategoryController implements CategoryApi {
         );
 
         final Function<Notification, ResponseEntity<?>> onError = notification ->
-            ResponseEntity.unprocessableEntity().body(notification);
+                ResponseEntity.unprocessableEntity().body(notification);
 
         final Function<CreateCategoryOutput, ResponseEntity<?>> onSuccess = output ->
                 ResponseEntity.created(URI.create("/categories/" + output.id())).body(output);
