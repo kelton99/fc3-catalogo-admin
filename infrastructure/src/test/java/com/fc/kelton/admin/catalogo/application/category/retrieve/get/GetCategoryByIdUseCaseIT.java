@@ -28,7 +28,7 @@ public class GetCategoryByIdUseCaseIT {
     private CategoryGateway categoryGateway;
 
     @Test
-    public void givenAValidId_whenCallsGetCategory_shouldCategory() {
+    public void givenAValidId_whenCallsGetCategory_shouldReturnCategory() {
         final var expectedName = "Filmes";
         final var expectedDescription = "A categoria mais assistida";
         final var expectedIsActive = true;

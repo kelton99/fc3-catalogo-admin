@@ -6,6 +6,8 @@ import com.fc.kelton.admin.catalogo.application.category.create.CreateCategoryOu
 import com.fc.kelton.admin.catalogo.application.category.create.CreateCategoryUseCase;
 import com.fc.kelton.admin.catalogo.application.category.retrieve.get.CategoryOutput;
 import com.fc.kelton.admin.catalogo.application.category.retrieve.get.GetCategoryByIdUseCase;
+import com.fc.kelton.admin.catalogo.application.category.update.UpdateCategoryOutput;
+import com.fc.kelton.admin.catalogo.application.category.update.UpdateCategoryUseCase;
 import com.fc.kelton.admin.catalogo.domain.category.Category;
 import com.fc.kelton.admin.catalogo.domain.category.CategoryID;
 import com.fc.kelton.admin.catalogo.domain.exceptions.DomainException;
@@ -14,6 +16,7 @@ import com.fc.kelton.admin.catalogo.domain.validation.Error;
 import com.fc.kelton.admin.catalogo.domain.validation.handler.Notification;
 import com.fc.kelton.admin.catalogo.infrastructure.api.CategoryApi;
 import com.fc.kelton.admin.catalogo.infrastructure.category.models.CreateCategoryApiInput;
+import com.fc.kelton.admin.catalogo.infrastructure.category.models.UpdateCategoryApiInput;
 import io.vavr.API;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
@@ -42,6 +45,9 @@ public class CategoryAPITest {
 
     @MockBean
     private GetCategoryByIdUseCase getCategoryByIdUseCase;
+
+    @MockBean
+    private UpdateCategoryUseCase updateCategoryUseCase;
 
     @Test
     public void givenAValidCommand_whenCallsCreateCategory_shouldReturnCategoryId() throws Exception {
@@ -149,7 +155,7 @@ public class CategoryAPITest {
     }
 
     @Test
-    public void givenAValidId_whenCallsGetCategory_shouldCategory() throws Exception {
+    public void givenAValidId_whenCallsGetCategory_shouldReturnCategory() throws Exception {
         final var expectedName = "Filmes";
         final var expectedDescription = "A categoria mais assistida";
         final var expectedIsActive = true;
@@ -198,4 +204,37 @@ public class CategoryAPITest {
                 .andDo(MockMvcResultHandlers.print())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.message", Matchers.equalTo(expectedErrorMessage)));
     }
+
+    @Test
+    public void givenAValidCommand_whenCallsUpdateCategory_shouldReturnCategoryId() throws Exception {
+        final var expectedId = "123";
+        final var expectedName = "Filmes";
+        final var expectedDescription = "A categoria mais assistida";
+        final var expectedIsActive = true;
+
+        Mockito.when(updateCategoryUseCase.execute(Mockito.any()))
+                .thenReturn(API.Right(UpdateCategoryOutput.from(expectedId)));
+
+        final var aCommand = new UpdateCategoryApiInput(expectedName, expectedDescription, expectedIsActive);
+
+        final var request = MockMvcRequestBuilders.put("/categories/{id}", expectedId)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(mapper.writeValueAsString(aCommand));
+
+        this.mvc.perform(request)
+                .andDo(MockMvcResultHandlers.print())
+                .andExpectAll(
+                        MockMvcResultMatchers.status().isOk(),
+                        MockMvcResultMatchers.header().string("Content-Type", MediaType.APPLICATION_JSON_VALUE),
+                        MockMvcResultMatchers.jsonPath("$.id", Matchers.equalTo(expectedId))
+                );
+
+        Mockito.verify(updateCategoryUseCase, Mockito.times(1))
+                .execute(Mockito.argThat(cmd ->
+                        Objects.equals(expectedName, cmd.name())
+                                && Objects.equals(expectedDescription, cmd.description())
+                                && Objects.equals(expectedIsActive, cmd.isActive())
+                ));
+    }
+
 }
