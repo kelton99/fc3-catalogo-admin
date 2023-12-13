@@ -4,6 +4,7 @@ import com.fc.kelton.admin.catalogo.domain.category.Category;
 import com.fc.kelton.admin.catalogo.domain.category.CategoryGateway;
 import com.fc.kelton.admin.catalogo.domain.category.CategoryID;
 import com.fc.kelton.admin.catalogo.domain.exceptions.DomainException;
+import com.fc.kelton.admin.catalogo.domain.exceptions.NotFoundException;
 import com.fc.kelton.admin.catalogo.domain.validation.Error;
 import com.fc.kelton.admin.catalogo.domain.validation.handler.Notification;
 import io.vavr.API;
@@ -48,8 +49,7 @@ public class DefaultUpdateCategoryUseCase extends UpdateCategoryUseCase {
     }
 
     private static Supplier<DomainException> notFound(final CategoryID anId) {
-        return () -> DomainException
-                .with(new Error("Category with ID %s was not found".formatted(anId.getValue())));
+        return () -> NotFoundException.with(Category.class, anId);
     }
 
 }

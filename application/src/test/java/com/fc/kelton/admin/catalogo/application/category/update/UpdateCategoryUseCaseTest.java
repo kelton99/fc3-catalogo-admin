@@ -1,10 +1,10 @@
 package com.fc.kelton.admin.catalogo.application.category.update;
 
-import com.fc.kelton.admin.catalogo.application.category.create.CreateCategoryCommand;
 import com.fc.kelton.admin.catalogo.domain.category.Category;
 import com.fc.kelton.admin.catalogo.domain.category.CategoryGateway;
 import com.fc.kelton.admin.catalogo.domain.category.CategoryID;
 import com.fc.kelton.admin.catalogo.domain.exceptions.DomainException;
+import com.fc.kelton.admin.catalogo.domain.exceptions.NotFoundException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -194,15 +194,11 @@ public class UpdateCategoryUseCaseTest {
 
     @Test
     public void givenCommandWithInvalidID_whenCallsUpdateCategory_shouldReturnNotFoundException() {
-        final var aCategory = Category.newCategory("Film", null, true);
         final var expectedName = "Filmes";
         final var expectedDescription = "A categoria mais assistida";
         final var expectedIsActive = true;
-
         final var expectedId = "123";
-
         final var expectedErrorMessage = "Category with ID 123 was not found";
-        final var expectedErrorCount = 1;
 
         final var aCommand = UpdateCategoryCommand.with(
                 expectedId,
@@ -215,14 +211,13 @@ public class UpdateCategoryUseCaseTest {
                 .thenReturn(Optional.empty());
 
 
-        final var actualException = Assertions.assertThrows(DomainException.class, () -> useCase.execute(aCommand));
+        final var actualException = Assertions.assertThrows(NotFoundException.class, () -> useCase.execute(aCommand));
 
-        Assertions.assertEquals(expectedErrorCount, actualException.getErrors().size());
-        Assertions.assertEquals(expectedErrorMessage, actualException.getErrors().get(0).message());
+        Assertions.assertEquals(expectedErrorMessage, actualException.getMessage());
 
         Mockito.verify(categoryGateway, Mockito.times(1))
                 .findById(Mockito.eq(CategoryID.from(expectedId)));
 
-        Mockito.verify(categoryGateway, Mockito.times(0)).update(any());
+        Mockito.verify(categoryGateway, Mockito.times(0)).update(Mockito.any());
     }
 }

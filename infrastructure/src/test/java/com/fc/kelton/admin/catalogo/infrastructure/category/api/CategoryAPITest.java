@@ -237,4 +237,71 @@ public class CategoryAPITest {
                 ));
     }
 
+    @Test
+    public void givenCommandWithInvalidID_whenCallsUpdateCategory_shouldReturnNotFoundException() throws Exception {
+        final var expectedId = "123";
+        final var expectedName = "Filmes";
+        final var expectedDescription = "A categoria mais assistida";
+        final var expectedIsActive = true;
+        final var expectedMessage = "Category with ID 123 was not found";
+
+        Mockito.when(updateCategoryUseCase.execute(Mockito.any()))
+                .thenThrow(NotFoundException.with(Category.class, CategoryID.from(expectedId)));
+
+        final var aCommand = new UpdateCategoryApiInput(expectedName, expectedDescription, expectedIsActive);
+
+        final var request = MockMvcRequestBuilders.put("/categories/{id}", expectedId)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(mapper.writeValueAsString(aCommand));
+
+        this.mvc.perform(request)
+                .andDo(MockMvcResultHandlers.print())
+                .andExpectAll(
+                        MockMvcResultMatchers.status().isNotFound(),
+                        MockMvcResultMatchers.header().string("Content-Type", MediaType.APPLICATION_JSON_VALUE),
+                        MockMvcResultMatchers.jsonPath("$.message", Matchers.equalTo(expectedMessage))
+                );
+
+        Mockito.verify(updateCategoryUseCase, Mockito.times(1))
+                .execute(Mockito.argThat(cmd ->
+                        Objects.equals(expectedName, cmd.name())
+                                && Objects.equals(expectedDescription, cmd.description())
+                                && Objects.equals(expectedIsActive, cmd.isActive())
+                ));
+    }
+
+    @Test
+    public void givenAInvalidName_whenCallsUpdateCategory_thenShouldReturnDomainException() throws Exception {
+        final var expectedId = "123";
+        final String expectedName = "Filmes";
+        final var expectedDescription = "A categoria mais assistida";
+        final var expectedIsActive = true;
+        final var expectedMessage = "'name' should not be null";
+
+        Mockito.when(updateCategoryUseCase.execute(Mockito.any()))
+                .thenReturn(API.Left(Notification.create(new Error(expectedMessage))));
+
+        final var aCommand = new UpdateCategoryApiInput(expectedName, expectedDescription, expectedIsActive);
+
+        final var request = MockMvcRequestBuilders.put("/categories/{id}", expectedId)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(mapper.writeValueAsString(aCommand));
+
+        this.mvc.perform(request)
+                .andDo(MockMvcResultHandlers.print())
+                .andExpectAll(
+                        MockMvcResultMatchers.status().isUnprocessableEntity(),
+                        MockMvcResultMatchers.header().string("Content-Type", MediaType.APPLICATION_JSON_VALUE),
+                        MockMvcResultMatchers.jsonPath("$.errors", Matchers.hasSize(1)),
+                        MockMvcResultMatchers.jsonPath("$.errors[0].message", Matchers.equalTo(expectedMessage))
+
+                );
+
+        Mockito.verify(updateCategoryUseCase, Mockito.times(1))
+                .execute(Mockito.argThat(cmd ->
+                        Objects.equals(expectedName, cmd.name())
+                                && Objects.equals(expectedDescription, cmd.description())
+                                && Objects.equals(expectedIsActive, cmd.isActive())
+                ));
+    }
 }
