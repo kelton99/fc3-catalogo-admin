@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fc.kelton.admin.catalogo.ControllerTest;
 import com.fc.kelton.admin.catalogo.application.category.create.CreateCategoryOutput;
 import com.fc.kelton.admin.catalogo.application.category.create.CreateCategoryUseCase;
+import com.fc.kelton.admin.catalogo.application.category.delete.DeleteCategoryUseCase;
 import com.fc.kelton.admin.catalogo.application.category.retrieve.get.CategoryOutput;
 import com.fc.kelton.admin.catalogo.application.category.retrieve.get.GetCategoryByIdUseCase;
 import com.fc.kelton.admin.catalogo.application.category.update.UpdateCategoryOutput;
@@ -48,6 +49,9 @@ public class CategoryAPITest {
 
     @MockBean
     private UpdateCategoryUseCase updateCategoryUseCase;
+
+    @MockBean
+    private DeleteCategoryUseCase deleteCategoryUseCase;
 
     @Test
     public void givenAValidCommand_whenCallsCreateCategory_shouldReturnCategoryId() throws Exception {
@@ -294,7 +298,6 @@ public class CategoryAPITest {
                         MockMvcResultMatchers.header().string("Content-Type", MediaType.APPLICATION_JSON_VALUE),
                         MockMvcResultMatchers.jsonPath("$.errors", Matchers.hasSize(1)),
                         MockMvcResultMatchers.jsonPath("$.errors[0].message", Matchers.equalTo(expectedMessage))
-
                 );
 
         Mockito.verify(updateCategoryUseCase, Mockito.times(1))
@@ -303,5 +306,23 @@ public class CategoryAPITest {
                                 && Objects.equals(expectedDescription, cmd.description())
                                 && Objects.equals(expectedIsActive, cmd.isActive())
                 ));
+    }
+
+    @Test
+    public void givenAValidId_whenCallsDeleteCategory_shouldReturnNoContent() throws Exception {
+        final var expectedId = "123";
+
+        Mockito.doNothing()
+                .when(deleteCategoryUseCase).execute(Mockito.any());
+
+        final var request = MockMvcRequestBuilders.delete("/categories/{id}", expectedId)
+                .contentType(MediaType.APPLICATION_JSON);
+
+        this.mvc.perform(request)
+                .andDo(MockMvcResultHandlers.print())
+                .andExpect(MockMvcResultMatchers.status().isNoContent());
+
+        Mockito.verify(deleteCategoryUseCase, Mockito.times(1))
+                .execute(Mockito.eq(expectedId));
     }
 }
